@@ -456,7 +456,7 @@ n_replicates = 100
 Load the baseline data
 ===========================#
 # Low risk
-MATfile_baseline_lowrisk = matopen("FMAlt_SimnOutputFiles_Julia/FMAlt_SimnJuliaV1ModelRun_#Covid19_baseline_LowRisk.mat")
+MATfile_baseline_lowrisk = matopen("SimnOutputFiles_Julia/FMAlt_SimnJuliaV1ModelRun_#Covid19_baseline_LowRisk.mat")
 SimnDataAllPopn_baseline_lowrisk = read(MATfile_baseline_lowrisk,"SimnData")
 close(MATfile_baseline_lowrisk)
 
@@ -464,7 +464,7 @@ infected_propn_by_age_baseline_lowrisk = SimnDataAllPopn_baseline_lowrisk[:,1]
 popn_dist_baseline_lowrisk = SimnDataAllPopn_baseline_lowrisk[:,2]
 
 # At risk
-MATfile_baseline_atrisk = matopen("FMAlt_SimnOutputFiles_Julia/FMAlt_SimnJuliaV1ModelRun_#Covid19_baseline_AtRisk.mat")
+MATfile_baseline_atrisk = matopen("SimnOutputFiles_Julia/FMAlt_SimnJuliaV1ModelRun_#Covid19_baseline_AtRisk.mat")
 SimnDataAllPopn_baseline_atrisk = read(MATfile_baseline_atrisk,"SimnData")
 close(MATfile_baseline_atrisk)
 
@@ -475,7 +475,7 @@ popn_dist_baseline_atrisk = SimnDataAllPopn_baseline_atrisk[:,2]
 Load the expanded vaccine programme only scenario data
 ===========================#
 # Low risk
-MATfile_expandvacc_lowrisk = matopen("FMAlt_SimnOutputFiles_Julia/FMAlt_SimnJuliaV1ModelRun_#Covid19_vacc_only_LowRisk.mat")
+MATfile_expandvacc_lowrisk = matopen("SimnOutputFiles_Julia/FMAlt_SimnJuliaV1ModelRun_#Covid19_vacc_only_LowRisk.mat")
 SimnDataAllPopn_expandvacc_lowrisk = read(MATfile_expandvacc_lowrisk,"SimnData")
 close(MATfile_expandvacc_lowrisk)
 
@@ -483,7 +483,7 @@ infected_propn_by_age_expandvacc_lowrisk = SimnDataAllPopn_expandvacc_lowrisk[:,
 popn_dist_expandvacc_lowrisk = SimnDataAllPopn_expandvacc_lowrisk[:,2]
 
 # At risk
-MATfile_expandvacc_atrisk = matopen("FMAlt_SimnOutputFiles_Julia/FMAlt_SimnJuliaV1ModelRun_#Covid19_vacc_only_AtRisk.mat")
+MATfile_expandvacc_atrisk = matopen("SimnOutputFiles_Julia/FMAlt_SimnJuliaV1ModelRun_#Covid19_vacc_only_AtRisk.mat")
 SimnDataAllPopn_expandvacc_atrisk = read(MATfile_expandvacc_atrisk,"SimnData")
 close(MATfile_expandvacc_atrisk)
 
@@ -494,7 +494,7 @@ popn_dist_expandvacc_atrisk = SimnDataAllPopn_expandvacc_atrisk[:,2]
 Load the NPIs only scenario data (with vaccination matching what has occurred historically)
 ===========================#
 # Low risk
-MATfile_NPIs_lowrisk = matopen("FMAlt_SimnOutputFiles_Julia/FMAlt_SimnJuliaV1ModelRun_#Covid19_NPIs_only_LowRisk.mat")
+MATfile_NPIs_lowrisk = matopen("SimnOutputFiles_Julia/FMAlt_SimnJuliaV1ModelRun_#Covid19_NPIs_only_LowRisk.mat")
 SimnDataAllPopn_NPIs_lowrisk = read(MATfile_NPIs_lowrisk,"SimnData")
 close(MATfile_NPIs_lowrisk)
 
@@ -502,7 +502,7 @@ infected_propn_by_age_NPIs_lowrisk = SimnDataAllPopn_NPIs_lowrisk[:,1]
 popn_dist_NPIs_lowrisk = SimnDataAllPopn_NPIs_lowrisk[:,2]
 
 # At risk
-MATfile_NPIs_atrisk = matopen("FMAlt_SimnOutputFiles_Julia/FMAlt_SimnJuliaV1ModelRun_#Covid19_NPIs_only_AtRisk.mat")
+MATfile_NPIs_atrisk = matopen("SimnOutputFiles_Julia/FMAlt_SimnJuliaV1ModelRun_#Covid19_NPIs_only_AtRisk.mat")
 SimnDataAllPopn_NPIs_atrisk = read(MATfile_NPIs_atrisk,"SimnData")
 close(MATfile_NPIs_atrisk)
 
@@ -513,7 +513,7 @@ popn_dist_NPIs_atrisk = SimnDataAllPopn_NPIs_atrisk[:,2]
 Load the combined NPIs and vaccine expansion scenario data
 ===========================#
 # Low risk
-MATfile_expandvacc_and_NPIs_lowrisk = matopen("FMAlt_SimnOutputFiles_Julia/FMAlt_SimnJuliaV1ModelRun_#Covid19_NPIs_and_vacc_LowRisk.mat")
+MATfile_expandvacc_and_NPIs_lowrisk = matopen("SimnOutputFiles_Julia/FMAlt_SimnJuliaV1ModelRun_#Covid19_NPIs_and_vacc_LowRisk.mat")
 SimnDataAllPopn_expandvacc_and_NPIs_lowrisk = read(MATfile_expandvacc_and_NPIs_lowrisk,"SimnData")
 close(MATfile_expandvacc_and_NPIs_lowrisk)
 
@@ -521,7 +521,7 @@ infected_propn_by_age_expandvacc_and_NPIs_lowrisk = SimnDataAllPopn_expandvacc_a
 popn_dist_expandvacc_and_NPIs_lowrisk = SimnDataAllPopn_expandvacc_and_NPIs_lowrisk[:,2]
 
 # At risk
-MATfile_expandvacc_and_NPIs_atrisk = matopen("FMAlt_SimnOutputFiles_Julia/FMAlt_SimnJuliaV1ModelRun_#Covid19_NPIs_and_vacc_AtRisk.mat")
+MATfile_expandvacc_and_NPIs_atrisk = matopen("SimnOutputFiles_Julia/FMAlt_SimnJuliaV1ModelRun_#Covid19_NPIs_and_vacc_AtRisk.mat")
 SimnDataAllPopn_expandvacc_and_NPIs_atrisk = read(MATfile_expandvacc_and_NPIs_atrisk,"SimnData")
 close(MATfile_expandvacc_and_NPIs_atrisk)
 

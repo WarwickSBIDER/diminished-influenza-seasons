@@ -320,7 +320,7 @@ function overall_popn_propn_of_age_estimates(low_risk_data::Array{Float64,2},
                                                 at_risk_data::Array{Float64,2})
 
     # Load proportion of each year of age that is at-risk
-    atrisk_propn_per_age = XLSX.readdata("../../../../Data/RiskGrpPropnsData/AtRiskPropnSpreadsheets/ByYrOfAge_RiskGrpPropnPerSeason_ModifiedAges2to4_EMH.xlsx", "Sheet1", "B23:CX23")
+    atrisk_propn_per_age = XLSX.readdata("../../data/RiskGrpPropnsData/AtRiskPropnSpreadsheets/ByYrOfAge_RiskGrpPropnPerSeason_ModifiedAges2to4_EMH.xlsx", "Sheet1", "B23:CX23")
     atrisk_propn_per_age = convert(Array{Float64,1},atrisk_propn_per_age[:])
 
     # Combine fractions from atrisk and lowrisk, with appropriate scaling
@@ -456,7 +456,7 @@ n_replicates = 100
 Load the baseline data
 ===========================#
 # Low risk
-MATfile_baseline_lowrisk = matopen("FMAlt_SimnOutputFiles_Julia/FMAlt_SimnJuliaV1ModelRun_#2021_2022_scen_no_COVID_LowRisk.mat")
+MATfile_baseline_lowrisk = matopen("SimnOutputFiles_Julia/FMAlt_SimnJuliaV1ModelRun_#2021_2022_scen_no_COVID_LowRisk.mat")
 SimnDataAllPopn_baseline_lowrisk = read(MATfile_baseline_lowrisk,"SimnData")
 close(MATfile_baseline_lowrisk)
 
@@ -464,7 +464,7 @@ infected_propn_by_age_baseline_lowrisk = SimnDataAllPopn_baseline_lowrisk[:,1]
 popn_dist_baseline_lowrisk = SimnDataAllPopn_baseline_lowrisk[:,2]
 
 # At risk
-MATfile_baseline_atrisk = matopen("FMAlt_SimnOutputFiles_Julia/FMAlt_SimnJuliaV1ModelRun_#2021_2022_scen_no_COVID_AtRisk.mat")
+MATfile_baseline_atrisk = matopen("SimnOutputFiles_Julia/FMAlt_SimnJuliaV1ModelRun_#2021_2022_scen_no_COVID_AtRisk.mat")
 SimnDataAllPopn_baseline_atrisk = read(MATfile_baseline_atrisk,"SimnData")
 close(MATfile_baseline_atrisk)
 
@@ -475,7 +475,7 @@ popn_dist_baseline_atrisk = SimnDataAllPopn_baseline_atrisk[:,2]
 Load the COVID impacted, no influenza in 2020/2021 flu season scenario
 ===========================#
 # Low risk
-MATfile_scen1_lowrisk = matopen("FMAlt_SimnOutputFiles_Julia/FMAlt_SimnJuliaV1ModelRun_#2021_2022_scen_COVID_impacted_LowRisk.mat")
+MATfile_scen1_lowrisk = matopen("SimnOutputFiles_Julia/FMAlt_SimnJuliaV1ModelRun_#2021_2022_scen_COVID_impacted_LowRisk.mat")
 SimnDataAllPopn_scen1_lowrisk = read(MATfile_scen1_lowrisk,"SimnData")
 close(MATfile_scen1_lowrisk)
 
@@ -483,7 +483,7 @@ infected_propn_by_age_scen1_lowrisk = SimnDataAllPopn_scen1_lowrisk[:,1]
 popn_dist_scen1_lowrisk = SimnDataAllPopn_scen1_lowrisk[:,2]
 
 # At risk
-MATfile_scen1_atrisk = matopen("FMAlt_SimnOutputFiles_Julia/FMAlt_SimnJuliaV1ModelRun_#2021_2022_scen_COVID_impacted_AtRisk.mat")
+MATfile_scen1_atrisk = matopen("SimnOutputFiles_Julia/FMAlt_SimnJuliaV1ModelRun_#2021_2022_scen_COVID_impacted_AtRisk.mat")
 SimnDataAllPopn_scen1_atrisk = read(MATfile_scen1_atrisk,"SimnData")
 close(MATfile_scen1_atrisk)
 

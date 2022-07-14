@@ -52,10 +52,10 @@ function VaccUptake_Historical_RecovRisk(SeasonsToSimulate,SimnRunType)
 	#Load data based on risk group type
 	if SimnRunType == 2
 		#AT RISK
-		PandemicFluVaccUptake = XLSX.readdata("../data/VaccUptake/DailyWeeklyUptakeRates_HistoricalFluSeasons/EstimatedDailyUptakeData_Shifted/AgeStrucModel_ByYrOfAge_DailyVaccUptakeCalYr_PandemicFluVacc_EMH_May2019.xlsx","At risk","C3:NC103")
+		PandemicFluVaccUptake = XLSX.readdata("../data/VaccUptake/DailyUptakeRatesHistoricalFluSeasons/AgeStrucModel_ByYrOfAge_DailyVaccUptakeCalYr_PandemicFluVacc_EMH_May2019.xlsx","At risk","C3:NC103")
 	elseif SimnRunType == 3
 		#LOW RISK
-		PandemicFluVaccUptake = XLSX.readdata("../data/VaccUptake/DailyWeeklyUptakeRates_HistoricalFluSeasons/EstimatedDailyUptakeData_Shifted/AgeStrucModel_ByYrOfAge_DailyVaccUptakeCalYr_PandemicFluVacc_EMH_May2019.xlsx","Low risk","C3:NC103")
+		PandemicFluVaccUptake = XLSX.readdata("../data/VaccUptake/DailyUptakeRatesHistoricalFluSeasons/AgeStrucModel_ByYrOfAge_DailyVaccUptakeCalYr_PandemicFluVacc_EMH_May2019.xlsx","Low risk","C3:NC103")
 	end
 
 	# Collate into Array, Assign to storage cell
@@ -75,12 +75,12 @@ function VaccUptake_Historical_RecovRisk(SeasonsToSimulate,SimnRunType)
 		if SimnRunType == 2
 		    #AT RISK
 				#Load at-risk only vaccine programme data
-		        HistoricalSeasonalFluVaccUptake = XLSX.readdata("../data/VaccUptake/DailyWeeklyUptakeRates_HistoricalFluSeasons/EstimatedDailyUptakeData_Shifted/AgeStrucModel_ByYrOfAge_DailyVaccUptakeBySeasonCalYr_AtRisk_EMH_Sep2020.xlsx","$(SheetNames[ii])","C3:NC103")
+		        HistoricalSeasonalFluVaccUptake = XLSX.readdata("../data/VaccUptake/DailyUptakeRatesHistoricalFluSeasons/AgeStrucModel_ByYrOfAge_DailyVaccUptakeBySeasonCalYr_AtRisk_EMH_Sep2020.xlsx","$(SheetNames[ii])","C3:NC103")
 
 		elseif SimnRunType == 3
 		    #LOW RISK
 				#Load at-risk only vaccine programme data
-		        HistoricalSeasonalFluVaccUptake = XLSX.readdata("../data/VaccUptake/DailyWeeklyUptakeRates_HistoricalFluSeasons/EstimatedDailyUptakeData_Shifted/AgeStrucModel_ByYrOfAge_DailyVaccUptakeBySeasonCalYr_LowRisk_EMH_Sep2020.xlsx","$(SheetNames[ii])","C3:NC103")
+		        HistoricalSeasonalFluVaccUptake = XLSX.readdata("../data/VaccUptake/DailyUptakeRatesHistoricalFluSeasons/AgeStrucModel_ByYrOfAge_DailyVaccUptakeBySeasonCalYr_LowRisk_EMH_Sep2020.xlsx","$(SheetNames[ii])","C3:NC103")
 		end
 
 		# Collate into Array, Assign to storage cell
@@ -105,10 +105,10 @@ function COVIDscen_VaccUptake_RecovRisk(SeasonsToSimulate,SimnRunType)
 	#Load data based on risk group type
 	if SimnRunType == 2
 		#AT RISK
-		PandemicFluVaccUptake = XLSX.readdata("../data/VaccUptake/DailyWeeklyUptakeRates_HistoricalFluSeasons/EstimatedDailyUptakeData_Shifted/AgeStrucModel_ByYrOfAge_DailyVaccUptakeCalYr_PandemicFluVacc_EMH_May2019.xlsx","At risk","C3:NC103")
+		PandemicFluVaccUptake = XLSX.readdata("../data/VaccUptake/DailyUptakeRatesHistoricalFluSeasons/AgeStrucModel_ByYrOfAge_DailyVaccUptakeCalYr_PandemicFluVacc_EMH_May2019.xlsx","At risk","C3:NC103")
 	elseif SimnRunType == 3
 		#LOW RISK
-		PandemicFluVaccUptake = XLSX.readdata("../data/VaccUptake/DailyWeeklyUptakeRates_HistoricalFluSeasons/EstimatedDailyUptakeData_Shifted/AgeStrucModel_ByYrOfAge_DailyVaccUptakeCalYr_PandemicFluVacc_EMH_May2019.xlsx","Low risk","C3:NC103")
+		PandemicFluVaccUptake = XLSX.readdata("../data/VaccUptake/DailyUptakeRatesHistoricalFluSeasons/AgeStrucModel_ByYrOfAge_DailyVaccUptakeCalYr_PandemicFluVacc_EMH_May2019.xlsx","Low risk","C3:NC103")
 	end
 
 	# Collate into Array, Assign to storage cell
@@ -128,12 +128,12 @@ function COVIDscen_VaccUptake_RecovRisk(SeasonsToSimulate,SimnRunType)
 		if SimnRunType == 2
 		    #AT RISK
 				#Load at-risk only vaccine programme data
-		        HistoricalSeasonalFluVaccUptake = XLSX.readdata("../data/VaccUptake/DailyWeeklyUptakeRates_HistoricalFluSeasons/AlternativeVaccStratDailyUptake/ByYrOfAge_DailyVaccUptakeCalYr_AtRisk_COVID19scen.xlsx","$(SheetNames[ii])","C3:NC103")
+		        HistoricalSeasonalFluVaccUptake = XLSX.readdata("../data/VaccUptake/AlternativeVaccStratDailyUptake/ByYrOfAge_DailyVaccUptakeCalYr_AtRisk_COVID19scen.xlsx","$(SheetNames[ii])","C3:NC103")
 
 		elseif SimnRunType == 3
 		    #LOW RISK
 				#Load at-risk only vaccine programme data
-		        HistoricalSeasonalFluVaccUptake = XLSX.readdata("../data/VaccUptake/DailyWeeklyUptakeRates_HistoricalFluSeasons/AlternativeVaccStratDailyUptake/ByYrOfAge_DailyVaccUptakeCalYr_LowRisk_COVID19scen.xlsx","$(SheetNames[ii])","C3:NC103")
+		        HistoricalSeasonalFluVaccUptake = XLSX.readdata("../data/VaccUptake/AlternativeVaccStratDailyUptake/ByYrOfAge_DailyVaccUptakeCalYr_LowRisk_COVID19scen.xlsx","$(SheetNames[ii])","C3:NC103")
 		end
 
 		# Collate into Array, Assign to storage cell

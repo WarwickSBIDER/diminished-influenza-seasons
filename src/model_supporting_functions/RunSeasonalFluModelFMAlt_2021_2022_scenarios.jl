@@ -10,26 +10,8 @@
 #Demography NOT EXPLICITLY INCLUDED. Population distribution updated at end of season
 
 # Compatible with Julia v1.0
-
-# Author: Ed Hill
-# Date: Sep 2018
-# Modified:  October 2018 (Revised multiseasonimmunity end of season transitions)
-#            October 2019 (Revised contact matrix usage)
-#-------------------------------------------------------------------------------
-##  What is modified compared to the Baguelin studies? %%%
-
-#[i]Only a single E and I class, so latent and infectious periods will be
-#   exponentially distributed here.
-
-#(ii) Incorporate protection as a result of past exposure (either through
-#      natural infection or succesful vaccination)
-
-#(iii) Multi-strain model. Assume can only be infected by one strain per season
 #-------------------------------------------------------------------------------
 
-
-### TEST FUNCTION, ENCAPSULATED IN A MACRO CALL
-# @iprofile begin
 
 # Define ODE equations
 function SeasonalFlu_ODEModelFMAlt_LeakyVacc(dPop,pop,p,t)
@@ -900,7 +882,10 @@ while T0<MaxTime
         beta = gamma.*R_0/spec_rad
         InfectionParam[1] = beta::Array{Float64,1}
 
-        # For 2020/2021 influenza season, no transmission
+        # Transform contact array for 2020/2021 influenza season, no transmission scenario
+        # Hard coded addition. Legacy of the pace of work, where a hard coding hack
+        # was swiftest way vs creating more elegant code with flag variable to access
+        # this loop when required.
         if 4000 < T[end] < 4380
             println("MonthIdx: $(MonthIdx)")
             println("T: $(T[end])")

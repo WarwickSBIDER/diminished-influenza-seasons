@@ -54,7 +54,7 @@ function HistoricalVaccUptake(SeasonsToSimulate)
     VaccUptakeBySeason = Vector{Array}(undef,SeasonsToSimulate)
 
     # Import the data - Pandemic flu vacc (2009/2010 season)
-    PandemicFluVaccUptake = XLSX.readdata("../data/VaccUptake/DailyWeeklyUptakeRates_HistoricalFluSeasons/EstimatedDailyUptakeData_Shifted/AgeStrucModel_ByYrOfAge_DailyVaccUptakeCalYr_PandemicFluVacc_EMH_May2019.xlsx","Both","C3:NC103")
+    PandemicFluVaccUptake = XLSX.readdata("../data/VaccUptake/DailyUptakeRatesHistoricalFluSeasons/AgeStrucModel_ByYrOfAge_DailyVaccUptakeCalYr_PandemicFluVacc_EMH_May2019.xlsx","Both","C3:NC103")
 
     # Collate into Array, Assign to storage cell
     PandemicFluVaccUptakeArray = Array{Float64, 2}(PandemicFluVaccUptake)
@@ -67,7 +67,7 @@ function HistoricalVaccUptake(SeasonsToSimulate)
         "2020_2021"]
 
     for ii = 1:length(SheetNames)
-        HistoricalSeasonalFluVaccUptake = XLSX.readdata("../data/VaccUptake/DailyWeeklyUptakeRates_HistoricalFluSeasons/EstimatedDailyUptakeData_Shifted/AgeStrucModel_ByYrOfAge_DailyVaccUptakeBySeasonCalYr_All_EMH_June2021.xlsx","$(SheetNames[ii])","C3:NC103")
+        HistoricalSeasonalFluVaccUptake = XLSX.readdata("../data/VaccUptake/DailyUptakeRatesHistoricalFluSeasons/AgeStrucModel_ByYrOfAge_DailyVaccUptakeBySeasonCalYr_All_EMH_June2021.xlsx","$(SheetNames[ii])","C3:NC103")
 
         # Collate into Array, Assign to storage cell
         VaccUptakeBySeasonArray = Array{Float64, 2}(HistoricalSeasonalFluVaccUptake)
@@ -88,7 +88,7 @@ function scen_2021_2022_VaccUptake(SeasonsToSimulate)
     VaccUptakeBySeason = Vector{Array}(undef,SeasonsToSimulate)
 
     # Import the data - Pandemic flu vacc (2009/2010 season)
-    PandemicFluVaccUptake = XLSX.readdata("../data/VaccUptake/DailyWeeklyUptakeRates_HistoricalFluSeasons/EstimatedDailyUptakeData_Shifted/AgeStrucModel_ByYrOfAge_DailyVaccUptakeCalYr_PandemicFluVacc_EMH_May2019.xlsx","Both","C3:NC103")
+    PandemicFluVaccUptake = XLSX.readdata("../data/VaccUptake/DailyUptakeRatesHistoricalFluSeasons/AgeStrucModel_ByYrOfAge_DailyVaccUptakeCalYr_PandemicFluVacc_EMH_May2019.xlsx","Both","C3:NC103")
 
     # Collate into Array, Assign to storage cell
     PandemicFluVaccUptakeArray = Array{Float64, 2}(PandemicFluVaccUptake)
@@ -102,7 +102,7 @@ function scen_2021_2022_VaccUptake(SeasonsToSimulate)
         # Note. I copied the 2021_2022 Sheet from 2020_2021 Sheet manually.
 
     for ii = 1:length(SheetNames)
-        HistoricalSeasonalFluVaccUptake = XLSX.readdata("../data/VaccUptake/DailyWeeklyUptakeRates_HistoricalFluSeasons/EstimatedDailyUptakeData_Shifted/AgeStrucModel_ByYrOfAge_DailyVaccUptakeBySeasonCalYr_All_EMH_June2021.xlsx","$(SheetNames[ii])","C3:NC103")
+        HistoricalSeasonalFluVaccUptake = XLSX.readdata("../data/VaccUptake/DailyUptakeRatesHistoricalFluSeasons/AgeStrucModel_ByYrOfAge_DailyVaccUptakeBySeasonCalYr_All_EMH_June2021.xlsx","$(SheetNames[ii])","C3:NC103")
 
         # Collate into Array, Assign to storage cell
         VaccUptakeBySeasonArray = Array{Float64, 2}(HistoricalSeasonalFluVaccUptake)
@@ -418,7 +418,7 @@ close(OutputFile)
 end
 #--------------------------------------------------------------------------
 ### ADD FILES TO SEARCH PATH FOR ODES/MODEL RUN FUNCTION
-include("model_supporting_functions/RunSeasonalFluModelFMAlt_Julia.jl")
+include("model_supporting_functions/RunSeasonalFluModelFMAlt_2021_2022_scenarios.jl")
 include("model_supporting_functions/ExpHistUpdateJulV1.jl")
 include("model_supporting_functions/FMAlt_APMCscheme_RunFns.jl")
 

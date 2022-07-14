@@ -31,7 +31,6 @@ Population-level vaccine efficacy estimates.
 Daily vaccine uptake proportions for at-risk, low risk, entire population groups under differing vaccination scenarios.
 
 ## results
-Directory containing simulation outputs and the plot script (household_bubble_impact_plots.m). The sub-directory 'matlab_packages' has files that are loaded by the plot script file
 
 ### 2020_2021_scenarios
 Outputs associated with the scenario analysis conducted prior to the 2020/2021 influenza season.
@@ -65,16 +64,16 @@ Files for packages that are used to produce and save the MATLAB generated figure
 
 ## src
 
-**RunSeasonalFluModelFMAlt_MultiSimn_2020_2021_scenarios.jl**
+**RunSeasonalFluModelFMAlt_MultiSimn_2020_2021_scenarios.jl**  
 Script associated with running the scenario analysis conducted prior to the 2020/2021 influenza season. Generates outputs for the overall population (independent of risk status).
 
-**RunSeasonalFluModelFMAlt_MultiSimn_2021_2022_scenarios.jl**
+**RunSeasonalFluModelFMAlt_MultiSimn_2021_2022_scenarios.jl**  
 Script associated with running the scenario analysis conducted prior to the 2021/2022 influenza season. Generates outputs for the overall population (independent of risk status).
 
-**RunSeasonalFluModelFMAlt_MultiSimn_RiskGrpVers_2020_2021_scenarios.jl**
+**RunSeasonalFluModelFMAlt_MultiSimn_RiskGrpVers_2020_2021_scenarios.jl**  
 Script associated with running the scenario analysis conducted prior to the 2020/2021 influenza season. Generates outputs for each risk status group.
 
-**RunSeasonalFluModelFMAlt_MultiSimn_RiskGrpVers_2021_2022_scenarios.jl**
+**RunSeasonalFluModelFMAlt_MultiSimn_RiskGrpVers_2021_2022_scenarios.jl**  
 Script associated with running the scenario analysis conducted prior to the 2021/2022 influenza season. Generates outputs for each risk status group.
 
 ### model_supporting_functions

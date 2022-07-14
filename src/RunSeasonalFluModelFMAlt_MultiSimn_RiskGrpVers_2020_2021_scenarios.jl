@@ -672,8 +672,8 @@ elseif SimnRunType == 2
     ODEForwardSimnTime = 0*365
 
 
-    #Get age distrubtion data within at-risk group
-    RiskGrpSpecificAgeDist = readdlm("AgeDistWithinRiskGrpWork/AtRiskPopn_CountPerAge.txt",',')
+    #Get age distribution data within at-risk group
+    RiskGrpSpecificAgeDist = readdlm("../data/AgeDistWithinRiskGrp/AtRiskPopn_CountPerAge.txt",',')
 elseif SimnRunType == 3
 
 	SeasonsToSimulate = 12
@@ -683,8 +683,8 @@ elseif SimnRunType == 3
     ODEInferenceTime = (SeasonsToSimulate-1)*365
     ODEForwardSimnTime = 0*365
 
-    #Get age distrubtion data within low risk group
-    RiskGrpSpecificAgeDist = readdlm("AgeDistWithinRiskGrpWork/LowRiskPopn_CountPerAge.txt",',')
+    #Get age distribution data within low risk group
+    RiskGrpSpecificAgeDist = readdlm("../data/AgeDistWithinRiskGrp/LowRiskPopn_CountPerAge.txt",',')
 else
     error("Incorrect RunType entered")
 end

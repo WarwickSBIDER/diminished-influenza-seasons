@@ -9,7 +9,7 @@ Please find below an explainer of the directory structure within this repository
 ## data
 Comprised of the following subdirectories.
 
-### AgeDistWithinRiskGrpWork
+### AgeDistWithinRiskGrp
 Age distribution data within at-risk and low risk groups.
 
 ### ContactData
@@ -49,9 +49,6 @@ Outputs associated with the scenario analysis conducted prior to the 2021/2022 i
 
 **influenza_season_2021_2022_intervention_scenario_comparisons.jl**  
 Script that produced the relative health episode occurrence MAT file, influenza_season_2021_2022_scenario_rel_vals.mat
-
-**seasonal_influenza_2021_2022_scenarios_table_gen.m**  
-Script used to compute the summary statistics shown in Tables XXX, YYY, ZZZ
 
 **seasonal_influenza_2021_2022_scenarios_table_gen.m**  
 Script used to compute the summary statistics shown in Tables XXX, YYY, ZZZ

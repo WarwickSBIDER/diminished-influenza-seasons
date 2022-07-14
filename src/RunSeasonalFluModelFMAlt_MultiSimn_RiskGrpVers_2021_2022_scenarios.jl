@@ -672,7 +672,7 @@ elseif SimnRunType == 2
 
 
     #Get age distrubtion data within at-risk group
-    RiskGrpSpecificAgeDist = readdlm("AgeDistWithinRiskGrpWork/AtRiskPopn_CountPerAge.txt",',')
+    RiskGrpSpecificAgeDist = readdlm("../data/AgeDistWithinRiskGrp/AtRiskPopn_CountPerAge.txt",',')
 elseif SimnRunType == 3
 
 	SeasonsToSimulate = 13 # 13 flu seasons spans 2009/2010 to 2021/2022 inclusive
@@ -683,7 +683,7 @@ elseif SimnRunType == 3
     ODEForwardSimnTime = 0*365
 
     #Get age distrubtion data within low risk group
-    RiskGrpSpecificAgeDist = readdlm("AgeDistWithinRiskGrpWork/LowRiskPopn_CountPerAge.txt",',')
+    RiskGrpSpecificAgeDist = readdlm("../data/AgeDistWithinRiskGrp/LowRiskPopn_CountPerAge.txt",',')
 else
     error("Incorrect RunType entered")
 end

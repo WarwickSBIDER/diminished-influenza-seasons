@@ -890,11 +890,11 @@ while T0<MaxTime
         # Legacy of the pace of work, where a hard coding hack
         # was swiftest way vs creating more elegant code with flag variable to access
         # this loop when required.
-        # if T[end] > 4000
-        #     println("MonthIdx: $(MonthIdx)")
-        #     println("T: $(T[end])")
-        #     ContactArrayTransformed = ContactArrayTransformed.*COVID_contact_scaling
-        # end
+        if T[end] > 4000
+            println("MonthIdx: $(MonthIdx)")
+            println("T: $(T[end])")
+            ContactArrayTransformed = ContactArrayTransformed.*COVID_contact_scaling
+        end
 
         #-----------------------------------------------------------------------
         ### UPDATE TRANSMISSION RELATED PARAMETERS

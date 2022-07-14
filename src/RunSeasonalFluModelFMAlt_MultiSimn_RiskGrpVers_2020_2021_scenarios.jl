@@ -923,7 +923,7 @@ include("model_supporting_functions/ExpHistUpdateJulV1.jl")
 #--------------------------------------------------------------------------
 ### Set ID for overall population data input file
 #--------------------------------------------------------------------------
-OverallPopnDataFileID = "Covid19_NPIs_and_vacc"
+OverallPopnDataFileID = "NPIs_and_vacc_copy"
 	# Options: "Covid19_NPIs_only"
 	#			"Covid19_NPIs_and_vacc"
 	# 			"Covid19_vacc_only"
@@ -933,7 +933,7 @@ OverallPopnDataFileID = "Covid19_NPIs_and_vacc"
 # SPECIFY TYPE OF RUN THROUGH FLAG VARIABLE
 #-------------------------------------------------------------------------------
 # (INFLUENCES VACCINE UPTAKE/EFFICACY)
-RiskGroupFlag = 1
+RiskGroupFlag = 0
 if RiskGroupFlag == 0
 	SimnRunType = 3
 elseif RiskGroupFlag == 1
@@ -946,7 +946,7 @@ timestep = 1.
 
 #--------------------------------------------------------------------------
 ### LOAD RELEVANT POPULATION LEVEL INFECTIOUS DATA
-MATfile = matopen("../results/2020_2021_scenarios/FMAlt_SimnOutputFiles_Julia//FMAlt_SimnJuliaV1ModelRun_#$(OverallPopnDataFileID).mat")
+MATfile = matopen("../results/2020_2021_scenarios/SimnOutputFiles_Julia/FMAlt_SimnJuliaV1ModelRun_#$(OverallPopnDataFileID).mat")
 SimnDataAllPopn = read(MATfile,"SimnData")
 close(MATfile)
 
@@ -1026,11 +1026,11 @@ ParticleSets = readdlm(ParamInputFile,',')
 #----------------------------------------------------------------------
 ### SPECIFY OUTPUT FILE SAVE LOCATION
 #----------------------------------------------------------------------
-SaveFileID = "Covid19_NPIs_and_vacc_copy" # "Covid19_NPIs_only" # "Covid19_NPIs_and_vacc" # "Covid19_vacc_only"
+SaveFileID = "NPIs_and_vacc_copy" # "Covid19_NPIs_only" # "Covid19_NPIs_and_vacc" # "Covid19_vacc_only"
 if RiskGroupFlag == 0
-	OutputFName = "../results/2020_2021_scenarios/FMAlt_SimnOutputFiles_Julia/FMAlt_SimnJuliaV1ModelRun_#$(SaveFileID)_LowRisk.mat"
+	OutputFName = "../results/2020_2021_scenarios/SimnOutputFiles_Julia/FMAlt_SimnJuliaV1ModelRun_#$(SaveFileID)_LowRisk.mat"
 else RiskGroupFlag == 1
-	OutputFName = "../results/2020_2021_scenarios/FMAlt_SimnOutputFiles_Julia/FMAlt_SimnJuliaV1ModelRun_#$(SaveFileID)_AtRisk.mat"
+	OutputFName = "../results/2020_2021_scenarios/SimnOutputFiles_Julia/FMAlt_SimnJuliaV1ModelRun_#$(SaveFileID)_AtRisk.mat"
 end
 
 #----------------------------------------------------------------------

@@ -492,7 +492,7 @@ ParticleSets = readdlm(ParamInputFile,',')
 #----------------------------------------------------------------------
 # SeedRunID = "Covid19_NPIs_only_copy"
 SeedRunID = "NPIs_and_vacc_copy"
-OutputFName = "../results/2020_2021_scenarios/FMAlt_SimnOutputFiles_Julia/FMAlt_SimnJuliaV1ModelRun_#$(SeedRunID).mat"
+OutputFName = "../results/2020_2021_scenarios/SimnOutputFiles_Julia/FMAlt_SimnJuliaV1ModelRun_#$(SeedRunID).mat"
 
 #----------------------------------------------------------------------
 ### SPECIFY POPULATION-LEVEL FORCE OF INFECTION FLAG OPTION

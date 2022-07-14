@@ -932,7 +932,7 @@ OverallPopnDataFileID = "2021_2022_scen_COVID_impacted"
 # SPECIFY TYPE OF RUN THROUGH FLAG VARIABLE
 #-------------------------------------------------------------------------------
 # (INFLUENCES VACCINE UPTAKE/EFFICACY)
-RiskGroupFlag = 1
+RiskGroupFlag = 0
 if RiskGroupFlag == 0
 	SimnRunType = 3
 elseif RiskGroupFlag == 1
@@ -945,7 +945,7 @@ timestep = 1.
 
 #--------------------------------------------------------------------------
 ### LOAD RELEVANT POPULATION LEVEL INFECTIOUS DATA
-MATfile = matopen("../results/2021_2022_scenarios//FMAlt_SimnOutputFiles_Julia/FMAlt_SimnJuliaV1ModelRun_#$(OverallPopnDataFileID).mat")
+MATfile = matopen("../results/2021_2022_scenarios/SimnOutputFiles_Julia/FMAlt_SimnJuliaV1ModelRun_#$(OverallPopnDataFileID).mat")
 SimnDataAllPopn = read(MATfile,"SimnData")
 close(MATfile)
 
@@ -1028,9 +1028,9 @@ ParticleSets = readdlm(ParamInputFile,',')
 # SaveFileID = "2021_2022_scen_no_COVID" # "2021_2022_scen_COVID_impacted" #"2021_2022_scen_no_COVID"
 SaveFileID = "2021_2022_scen_COVID_impacted_copy"
 if RiskGroupFlag == 0
-	OutputFName = "../results/2021_2022_scenarios/FMAlt_SimnOutputFiles_Julia/FMAlt_SimnJuliaV1ModelRun_#$(SaveFileID)_LowRisk.mat"
+	OutputFName = "../results/2021_2022_scenarios/SimnOutputFiles_Julia/FMAlt_SimnJuliaV1ModelRun_#$(SaveFileID)_LowRisk.mat"
 else RiskGroupFlag == 1
-	OutputFName = "../results/2021_2022_scenarios/FMAlt_SimnOutputFiles_Julia/FMAlt_SimnJuliaV1ModelRun_#$(SaveFileID)_AtRisk.mat"
+	OutputFName = "../results/2021_2022_scenarios/SimnOutputFiles_Julia/FMAlt_SimnJuliaV1ModelRun_#$(SaveFileID)_AtRisk.mat"
 end
 
 #----------------------------------------------------------------------

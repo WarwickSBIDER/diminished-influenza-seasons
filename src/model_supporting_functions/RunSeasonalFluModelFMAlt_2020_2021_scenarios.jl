@@ -1,8 +1,6 @@
 #Purpose:
 #Functions to run Model FMAlt, WITH LEAKY VACCINE
 
-#VERSION TO RECOVER RISK GROUP SPECIFIC INFORMATION
-
 #Model specifics:
 #Influenza deterministic transmission dynamic model
 #Multi-strain
@@ -11,15 +9,15 @@
 #Exposure history (for previous season only) included
 #Demography NOT EXPLICITLY INCLUDED. Population distribution updated at end of season
 
-#Compatible with Julia v1.
+# Compatible with Julia v1.0
+#-------------------------------------------------------------------------------
 
-# Author: Ed Hill
-# Date: June 2019
-# Modified:  October 2019 (Revised contact matrix usage)
-#--------------------------------------------------------------------------
+
+### TEST FUNCTION, ENCAPSULATED IN A MACRO CALL
+# @iprofile begin
 
 # Define ODE equations
-function SeasonalFlu_ODEModelFMAlt_LeakyVacc_RecoverRisk(dPop,pop,p,t)
+function SeasonalFlu_ODEModelFMAlt_LeakyVacc(dPop,pop,p,t)
      #Inputs of form (dPop,Pop,p,t)
      # dPop - rate of change for each entity
      # pop - current value for each entity
@@ -40,12 +38,6 @@ function SeasonalFlu_ODEModelFMAlt_LeakyVacc_RecoverRisk(dPop,pop,p,t)
     # ExpHistArray - Interaction between exposure history and susceptibility to
     #                  the current season strain variant
     # NumOfStrains - Number of strains
-    # popnFOIarray - 3D array. Population level force of infection.
-    #                 --> Row per timestep.
-    #                   --> Column per age
-    #                   --> Slice per strain
-    # timestep - frequency at which ODE solver outputs results
-    # n_PopnLevel - Proportion of overall population (across all risk status groups) residing in each age group
 
     #Outputs
     # dPop_vec - Return values of derivatives at time t for values pop
@@ -61,15 +53,11 @@ function SeasonalFlu_ODEModelFMAlt_LeakyVacc_RecoverRisk(dPop,pop,p,t)
     DayOfYear = t + p[8]::Float64
     ExpHistArray = p[9]::Array{Float64,3}
     NumOfStrains = p[10]::Int64
-    popnFOIarray = p[11]::Array{Float64,3}
-    timestep = p[12]::Float64
-    n_PopnLevel = p[13]::Array{Float64,1}
 
     #Disaggregate Age and Risk class number parameters
     M = DemogParam[1]
     M = convert(Int64,M) #Assert as integer
     TotalPopn = DemogParam[2]::Float64
-
 
     #Disaggregate infection param
     beta = InfectionParam[1]::Array{Float64,1} #Transmission rate
@@ -107,18 +95,6 @@ function SeasonalFlu_ODEModelFMAlt_LeakyVacc_RecoverRisk(dPop,pop,p,t)
     #Initialise ODE indexing variables
     SusODENum = 2*ExpHistNum*M
     ODENumPerNonSusGrp = NumOfStrains*M
-
-    #Get population level number of infectious
-    popnFOI_idx  = div(t,timestep) + 1
-    popnFOI_idx  = convert(Int64,popnFOI_idx)
-
-    if popnFOI_idx  == size(popnFOIarray,1)
-        popnFOI = popnFOIarray[popnFOI_idx,:,:]
-    else
-        popnFOI = popnFOIarray[popnFOI_idx,:,:] + ((popnFOIarray[popnFOI_idx+1,:,:] - popnFOIarray[popnFOI_idx,:,:])*(mod(t,timestep)/timestep))
-    end
-
-
     #--------------------------------------------------------------------------
     ### INITIALISE ODE VARIABLES
     dPop_SusNotV = zeros(M,ExpHistNum)
@@ -158,10 +134,20 @@ function SeasonalFlu_ODEModelFMAlt_LeakyVacc_RecoverRisk(dPop,pop,p,t)
     #Disaggragte LeakyVaccVar, scale force of infection if appropriate
     if LeakyTransFlag == 0 #Unmodfiied infectiousness
         alpha = LeakyVaccVar[1]::Array{Float64,2}
-
+        #Get total number of infecteds. Array -> row per age, column per strain
+        I = I_NotV + I_V
     elseif LeakyTransFlag == 1 #Reduced infectiousness active
         alpha = LeakyVaccVar[1]::Array{Float64,2}
         delta = LeakyVaccVar[2]::Array{Float64,2}
+
+        #Get scaled force of infection. Array -> row per age, column per strain
+        I = zeros(M,NumOfStrains)
+        for ii = 1:M
+             for jj = 1:NumOfStrains
+                  I[ii,jj] = I_NotV[ii,jj] + (1.0-delta[ii,jj])*I_V[ii,jj]
+             end
+        end
+        #I = I_NotV + (1.0-delta).*I_V #Vectorised version
     else
         error("Invalid value of $LeakyTransFlag for LeakyTransFlag, should be 0 or 1")
     end
@@ -169,76 +155,76 @@ function SeasonalFlu_ODEModelFMAlt_LeakyVacc_RecoverRisk(dPop,pop,p,t)
     #---------------------------------------------------------------------------
     ### ODE COMPUTATIONS
     #Evaluate the infectious contacts per age group
-    InfContacts = (ContactArray*(popnFOI./(n_PopnLevel)))::Array{Float64,2} #Vectorised version
+    InfContacts = (ContactArray*(I./(n)))::Array{Float64,2} #Vectorised version
 
     # For each age class, calculate the derivative for each infection compartment
-    for ii=1:M
+    for i=1:M
             #---------------------------------------------------------------
             ### Iterate through each set of exposure history and
             ### associated susceptible compartments
-            for jj = 1:ExpHistNum
+            for j = 1:ExpHistNum
 
                  #Population-level susceptibility against all strains for exposure hist. grp j,
                  #non-vaccinated, age group i
                  Sum_ModSusStrain_NotV = 0.
                  for kk = 1:NumOfStrains
-                     Sum_ModSusStrain_NotV += AgeSuscep[ii,kk]*beta[kk]*InfContacts[ii,kk]*ExpHistArray[kk,jj,ii]
+                     Sum_ModSusStrain_NotV += AgeSuscep[i,kk]*beta[kk]*InfContacts[i,kk]*ExpHistArray[kk,j,i]
                  end
                  #Equivalent to sum(AgeSuscep[i,:].*beta.*InfContacts[i,:].*ExpHistArrayTranspose[j,:])
 
                 #Non-vaccinated population, S compartments
-                dPop[ii+((jj-1)*M)] = -Sum_ModSusStrain_NotV*S_NotV[ii,jj] - mu[ii]*S_NotV[ii,jj] #Susceptible
+                dPop[i+((j-1)*M)] = -Sum_ModSusStrain_NotV*S_NotV[i,j] - mu[i]*S_NotV[i,j] #Susceptible
                 #dPop[i+((j-1)*M)] = -sum(AgeSuscep[i,:].*beta.*InfContacts[i,:].*ExpHistArrayTranspose[j,:])*S_NotV[i,j] - mu[i]*S_NotV[i,j] #Susceptible
 
                 #Population-level susceptibility against all strains for exposure hist. grp i,
                 #Vaccinated
                 Sum_ModSusStrain_V = 0.
                 for kk = 1:NumOfStrains
-                    Sum_ModSusStrain_V += AgeSuscep[ii,kk]*(1.0-alpha[ii,kk])*beta[kk]*InfContacts[ii,kk]*ExpHistArray[kk,jj,ii]
+                    Sum_ModSusStrain_V += AgeSuscep[i,kk]*(1.0-alpha[i,kk])*beta[kk]*InfContacts[i,kk]*ExpHistArray[kk,j,i]
                 end
                 #Equivalent to sum(AgeSuscep[i,:].*beta.*(1.0-alpha[i,:]).*InfContacts[i,:].*ExpHistArrayTranspose[j,:])
 
                 #Vaccinated population, S compartments
-                dPop[(ExpHistNum*M)+((jj-1)*M)+ii] = -Sum_ModSusStrain_V*S_V[ii,jj] + mu[ii]*S_NotV[ii,jj] #Susceptible
+                dPop[(ExpHistNum*M)+((j-1)*M)+i] = -Sum_ModSusStrain_V*S_V[i,j] + mu[i]*S_NotV[i,j] #Susceptible
                 #dPop[(ExpHistNum*M)+((j-1)*M)+i] = -sum(AgeSuscep[i,:].*beta.*(1.0-alpha[i,:]).*InfContacts[i,:].*ExpHistArrayTranspose[j,:])*S_V[i,j] + mu[i]*S_NotV[i,j] #Susceptible
 
             end
 
            #---------------------------------------------------------------
            ### ITERATE THROUGH EACH E,I,R COMPARTMENT
-           for kk = 1:NumOfStrains
+           for k = 1:NumOfStrains
 
-                #---------------------------------------------------------------
-                ### Non-vaccinated population, E, I, R compartments
+            #---------------------------------------------------------------
+            ### Non-vaccinated population, E, I, R compartments
 
-                #Population-level susceptibility for age class i, strain k, non-vaccinated
-                Sum_ModSus_NotV = 0.
-                for jj = 1:ExpHistNum
-                    Sum_ModSus_NotV += ExpHistArray[kk,jj,ii]*S_NotV[ii,jj] #Get modified susceptibility value for each exposure history grp
-                end
+            #Population-level susceptibility for age class i, strain k, non-vaccinated
+            Sum_ModSus_NotV = 0.
+            for jj = 1:ExpHistNum
+                Sum_ModSus_NotV += ExpHistArray[k,jj,i]*S_NotV[i,jj] #Get modified susceptibility value for each exposure history grp
+            end
 
-                dPop[SusODENum+((kk-1)*M)+ii] = AgeSuscep[ii,kk]*beta[kk]*InfContacts[ii,kk]*Sum_ModSus_NotV -sigma[kk]*E_NotV[ii,kk] - mu[ii]*E_NotV[ii,kk]  #Latent
+            dPop[SusODENum+((k-1)*M)+i] = AgeSuscep[i,k]*beta[k]*InfContacts[i,k]*Sum_ModSus_NotV -sigma[k]*E_NotV[i,k] - mu[i]*E_NotV[i,k]  #Latent
 
-                dPop[SusODENum+1*ODENumPerNonSusGrp+((kk-1)*M)+ii] = sigma[kk]*E_NotV[ii,kk] - gamma[kk]*I_NotV[ii,kk] - mu[ii]*I_NotV[ii,kk]  #Infectious
-                dPop[SusODENum+2*ODENumPerNonSusGrp+((kk-1)*M)+ii] = gamma[kk]*I_NotV[ii,kk] - mu[ii]*R_NotV[ii,kk] #Recovered/Immune
+            dPop[SusODENum+1*ODENumPerNonSusGrp+((k-1)*M)+i] = sigma[k]*E_NotV[i,k] - gamma[k]*I_NotV[i,k] - mu[i]*I_NotV[i,k]  #Infectious
+            dPop[SusODENum+2*ODENumPerNonSusGrp+((k-1)*M)+i] = gamma[k]*I_NotV[i,k] - mu[i]*R_NotV[i,k] #Recovered/Immune
 
-                #---------------------------------------------------------------
-                ### Vaccinated population, E, I, R compartments
+            #---------------------------------------------------------------
+            ### Vaccinated population, E, I, R compartments
 
-                #Population-level susceptibility for age class i, strain k, non-vaccinated
-                Sum_ModSus_V = 0.
-                for jj = 1:ExpHistNum
-                   Sum_ModSus_V += ExpHistArray[kk,jj,ii]*S_V[ii,jj] #Get modified susceptibility value for each exposure history grp
-                end
+            #Population-level susceptibility for age class i, strain k, non-vaccinated
+            Sum_ModSus_V = 0.
+            for jj = 1:ExpHistNum
+               Sum_ModSus_V += ExpHistArray[k,jj,i]*S_V[i,jj] #Get modified susceptibility value for each exposure history grp
+            end
 
-                dPop[SusODENum+3*ODENumPerNonSusGrp+((kk-1)*M)+ii] = AgeSuscep[ii,kk]*beta[kk]*(1.0-alpha[ii,kk])*InfContacts[ii,kk]*Sum_ModSus_V -sigma[kk]*E_V[ii,kk] + mu[ii]*E_NotV[ii,kk]  #Latent
+            dPop[SusODENum+3*ODENumPerNonSusGrp+((k-1)*M)+i] = AgeSuscep[i,k]*beta[k]*(1.0-alpha[i,k])*InfContacts[i,k]*Sum_ModSus_V -sigma[k]*E_V[i,k] + mu[i]*E_NotV[i,k]  #Latent
 
-                dPop[SusODENum+4*ODENumPerNonSusGrp+((kk-1)*M)+ii] = sigma[kk]*E_V[ii,kk] - gamma[kk]*I_V[ii,kk] + mu[ii]*I_NotV[ii,kk]  #Infectious
-                dPop[SusODENum+5*ODENumPerNonSusGrp+((kk-1)*M)+ii] = gamma[kk]*I_V[ii,kk] + mu[ii]*R_NotV[ii,kk] #Recovered/Immune
+            dPop[SusODENum+4*ODENumPerNonSusGrp+((k-1)*M)+i] = sigma[k]*E_V[i,k] - gamma[k]*I_V[i,k] + mu[i]*I_NotV[i,k]  #Infectious
+            dPop[SusODENum+5*ODENumPerNonSusGrp+((k-1)*M)+i] = gamma[k]*I_V[i,k] + mu[i]*R_NotV[i,k] #Recovered/Immune
 
-                #---------------------------------------------------------------------------
-                # ODE for cumulative number of cases
-                dPop[SusODENum+6*ODENumPerNonSusGrp+((kk-1)*M)+ii] = sigma[kk]*(E_NotV[ii,kk]+E_V[ii,kk])
+            #---------------------------------------------------------------------------
+            # ODE for cumulative number of cases
+            dPop[SusODENum+6*ODENumPerNonSusGrp+((k-1)*M)+i] = sigma[k]*(E_NotV[i,k]+E_V[i,k])
           end
     end
 end
@@ -264,22 +250,18 @@ function  PopulateContactArray(ContactArrayTemp)
 return ContactArrayTransformed
 end
 
-function RunSeasonalFluModelFMAlt_RecoverRiskGrp(ContactArray,MortalityFile,ONSPopnDistEngland,RiskGrpSpecificAgeDist,
-    SimnParam,InfectionParam,popnFOIarray,AgeSuscep,AgeGrpSuscepTuple,
+function RunSeasonalFluModelFMAlt(ContactArray,MortalityFile,ONSPopnDistEngland,
+    SimnParam,InfectionParam,AgeSuscep,AgeGrpSuscepTuple,
     VaccUptakeBySeason,LeakyVaccVarBySeason,LeakyTransFlag,
     ExpHistArrayFnInputs,ExpHistNum,ExpHistVaccType,MultiSeasonImmPropn,
     InfPropn_StartOfSeason,ICFromFile,SimnRunType)
 #Inputs
 # ContactArray - contact data for age class mixing
-# MortalityFile, ONSPopnDistEngland - Import mortality rates and population-level age distributions
-# RiskGrpSpecificAgeDist - Proportion per age group (within risk status group undergoing simulation)
+# MortalityFile, ONSPopnDistEngland - Import mortality rates and
+# age distributions
 # SimnParam - Specify month of year simulation will begin (1-Jan, 2-Feb,..., 12-Dec),
 #             simn length and ode45 timestep value
 # infection_param - Vector: beta - Transmission rate, sigma - rate of loss of latency, gamma - rate of loss of infectiousness
-# popnFOIarray - 3D array. Population level force of infection.
-#                 --> Row per timestep.
-#                   --> Column per age
-#                   --> Slice per strain
 # AgeSuscep - Array: Age & strain specific susceptibilities (row per age class, column per strain)
 # AgeGrpSuscepTuple - Cell: Three entries
 #                   --> Cell 1 - AgeGrpSuscepParamNum
@@ -329,11 +311,10 @@ function RunSeasonalFluModelFMAlt_RecoverRiskGrp(ContactArray,MortalityFile,ONSP
 
 #Use first row of ONSPopnDistEngland data array
 #Corresponds to 2010 absolute population values stratified by age
-OvPopnDist = ONSPopnDistEngland[1,:]
-n_PopnLevel = OvPopnDist/sum(OvPopnDist);
+PopnDist = ONSPopnDistEngland[1,:]
+AbsolutePopn = ONSPopnDistEngland[1,:]
 
 #Assign settled age profile (at start of simulation year) to variable
-PopnDist = RiskGrpSpecificAgeDist[1,:];
 current_n = PopnDist/sum(PopnDist)
 
 #Number of age classes
@@ -373,7 +354,7 @@ R_0 = InfectionParam[4]::Array{Float64,1}
 
 #Transform ContactArray. Divide by population structure
 #Divide row ii of ContactArray by current_n(ii)
-ContactArrayTemp = ContactArray./n_PopnLevel #n_PopnLevel column vector, orientation okay!
+ContactArrayTemp = ContactArray./current_n #Current_n column vector, orientation okay!
 
 #Set values for 90+ age categories
 #Match 89-90 single year age bracket values
@@ -387,8 +368,8 @@ spec_rad = maximum(abs.(eigvals(ContactArrayTransformed)))::Float64 #the spectra
 beta = gamma.*R_0/spec_rad
 InfectionParam[1] = beta::Array{Float64,1}
 
-# For COVID impact scenario, scale the contact array
-influenza_season_2021_2022_contact_scaling::Array{Float64,2} = readdlm("../influenza_season_2021_2022/influenza_season_2021_2022_contact_scaling.csv",',')
+# For COVID-19 setting, assign the contact pattern scaling array to variable
+COVID_contact_scaling::Array{Float64,2} = readdlm("../data/ContactData/COVID_contact_scaling.csv",',')
 
 #------------------------------------------------------------------------------
 ### EXPOSURE HISTORY PARAMETERS (NOW AN INPUT TO THIS FUNCTION!)
@@ -407,6 +388,12 @@ NumOfStrains = size(InfPropn_StartOfSeason,2)
 
 #------------------------------------------------------------------------------
 ###  SET UP INITIAL CONDITIONS
+
+# #Set up initial infected
+# I0_NotV = zeros(M,NumOfStrains)
+# for i = 1:NumOfStrains
+#      I0_NotV[:,i] = current_n*InfPropn_StartOfSeason[i]
+# end
 
 #Set up initial infected, pick out specified row from SeasonStartPropnInf
 TotalTime_H1N1Only = ODEBurnIn + ODEStaticPopnTime
@@ -456,7 +443,7 @@ CompartmentTraceSize = (ODESampleTime/timestep) + NumYrsRecorded #Add NumYrsReco
 CompartmentTraceSize=convert(Int64,CompartmentTraceSize)
 
 NumYrsSimTotal = ceil(MaxTime/365)
-FOI_CompartmentTraceSize = (MaxTime/timestep) + 1 #Add NumYrsSimTotal to include initial condition
+FOI_CompartmentTraceSize = (MaxTime/timestep) + 1 #Add one to include initial condition
 FOI_CompartmentTraceSize = convert(Int64,FOI_CompartmentTraceSize)
 
 Store_S_NotV= zeros(CompartmentTraceSize,M,ExpHistNum) #3rd dimension for exposure history
@@ -552,9 +539,17 @@ ODE_TotalEqnNum = (ODE_EqnNum_NonSus)+(ODE_EqnNum_Sus)
 
 #Specify current month
 MonthIdx = SimnStartDate
+
+#Initialise storage variables
 InitialStoreFlag = 0 #Flag to specify if any values have been stored yet
 StoreStartIdx = 1 #Initialise row indexing counter for storage arrays
-PopnDistCounter = 1 #Counter used to index row of ONS population distribution data array
+
+InitialStoreFlag_PopnFOI = 0 #Flag to specify if any popnFOI values have been stored yet
+StorePopnFOI_StartIdx = 1 #Initialise row indexing counter for popnFOI storage arrays]
+
+#Initialise counter used to index row of ONS population distribution data array
+PopnDistCounter = 1
+
 while T0<MaxTime
 
     #tspan = (0.0,365.0)
@@ -581,15 +576,18 @@ while T0<MaxTime
     #Can now add parameters as input to ODE problem!
     p = [DemogParam, ContactArrayTransformed, InfectionParam, AgeSuscep,
             vacc_per_day, LeakyVaccVar, LeakyTransFlag,
-            CumulDaysCount[SimnStartDate],ExpHistArray,NumOfStrains,
-            popnFOIarray,timestep,n_PopnLevel]
+            CumulDaysCount[SimnStartDate],ExpHistArray,NumOfStrains]
+
+    #Code for checking type-related problems
+    #du = similar(IC)
+    #@code_warntype SeasonalFlu_ODEModelFMAlt_LeakyVacc(du,IC,p,10)
 
     #Define ODE problem and solve
-    prob = ODEProblem(SeasonalFlu_ODEModelFMAlt_LeakyVacc_RecoverRisk,IC,tspanForSol,p)
+    prob = ODEProblem(SeasonalFlu_ODEModelFMAlt_LeakyVacc,IC,tspanForSol,p)
 
     #can use alg_hints=[:stiff] if we have a stiff problem where we need high accuracy, but don't know the best stiff algorithm for this problem
     if InitialStoreFlag==0 || MonthIdx == SimnStartDate #If start of flu season, store initial value, save_start = true
-       sol = solve(prob, Tsit5(), saveat=timestep, abstol = 1e-12, reltol = 1e-10,
+        sol = solve(prob, Tsit5(), saveat=timestep, abstol = 1e-12, reltol = 1e-10,
        #callback = PositiveDomain(save=false),force_dtmin=true)
        isoutofdomain=(u,p,t) -> any(x -> x < 0, u))
     else
@@ -614,8 +612,8 @@ while T0<MaxTime
    end
 
     #Separate columns into susceptible and non-susceptible compartments
-    SusNotVPop = reshape(pop[:,1:SusClassTotal],:,M,ExpHistNum)::Array{Float64,3}
-    SusVPop = reshape(pop[:,SusClassTotal+1:SusClassTotal*2],:,M,ExpHistNum)::Array{Float64,3}
+    SusNotVPop = reshape(pop[:,1:SusClassTotal]::Array{Float64,2},:,M,ExpHistNum)::Array{Float64,3}
+    SusVPop = reshape(pop[:,SusClassTotal+1:SusClassTotal*2]::Array{Float64,2},:,M,ExpHistNum)::Array{Float64,3}
     ENotV_Pop = reshape(pop[:,SusClassTotal*2+1:(SusClassTotal*2) + NonSusClassTotal],:,M,NumOfStrains)::Array{Float64,3}
     INotV_Pop = reshape(pop[:,(SusClassTotal*2)+NonSusClassTotal+1:(SusClassTotal*2) + 2*NonSusClassTotal],:,M,NumOfStrains)::Array{Float64,3}
     RNotV_Pop = reshape(pop[:,(SusClassTotal*2)+(2*NonSusClassTotal)+1:(SusClassTotal*2) + 3*NonSusClassTotal],:,M,NumOfStrains)::Array{Float64,3}
@@ -627,10 +625,10 @@ while T0<MaxTime
     #If beyond burn in, store compartment values
     if T[end]>ODEBurnIn
 
-        #Get proportion of population in each age group at each timstep
-       n_PopnDist = sum(SusNotVPop,dims=3) + sum(SusVPop,dims=3) + sum(ENotV_Pop,dims=3) +
-                    sum(INotV_Pop,dims=3) + sum(RNotV_Pop,dims=3) + sum(EV_Pop,dims=3) +
-                    sum(IV_Pop,dims=3) + sum(RV_Pop,dims=3)
+         #Get proportion of population in each age group at each timstep
+        n_PopnDist = sum(SusNotVPop,dims=3) + sum(SusVPop,dims=3) + sum(ENotV_Pop,dims=3) +
+                     sum(INotV_Pop,dims=3) + sum(RNotV_Pop,dims=3) + sum(EV_Pop,dims=3) +
+                     sum(IV_Pop,dims=3) + sum(RV_Pop,dims=3)
 
          if InitialStoreFlag == 0
             StoreEndIdx = length(tspan)
@@ -669,7 +667,6 @@ while T0<MaxTime
     #----------------------------------------------------------------------
     #Store total number of infected, can then be used to recover risk group
     #information!
-
     if StoreFlag_PopnFOI == 1
         if InitialStoreFlag_PopnFOI == 0
             StorePopnFOI_EndIdx = length(tspan)
@@ -786,18 +783,12 @@ while T0<MaxTime
             #Youngest age class, all will be in "naive" susceptible class
             S0_NotV[1,1] = updated_n[1]
             S0_NotV[1,2:10] .= 0.0
-        elseif T[end] < ODEBurnIn + ODEStaticPopnTime + ODEInferenceTime #Use historical popultion data, 2010-2016
+        elseif T[end] < ODEBurnIn + ODEStaticPopnTime + ODEInferenceTime #Use historical population data
             #Pick out specified row of ONS popn dist array
             PopnDistCounter = PopnDistCounter + 1
 
-            global OverallAbsolutePopn, AbsolutePopn
-
-            #Get updated (overall) age-stratified population distribution
-            OverallAbsolutePopn = ONSPopnDistEngland[PopnDistCounter,:]
-            n_PopnLevel = OverallAbsolutePopn./sum(OverallAbsolutePopn);
-
-            #Get updated age distribution within risk group underconsideration
-            AbsolutePopn = RiskGrpSpecificAgeDist[PopnDistCounter,:];
+            #Get updated age partitioned population distribution
+            AbsolutePopn = ONSPopnDistEngland[PopnDistCounter,:]
             updated_n = AbsolutePopn/sum(AbsolutePopn)
 
             #Find relative magnitude of next season population split per age compared to
@@ -822,38 +813,23 @@ while T0<MaxTime
             S0_NotV[end,:] = (temp_S0_NotV[end-1,:] + temp_S0_NotV[end,:])*scale_n[end]
 
             S0_NotV[1,1] = updated_n[1] #Youngest age class, all will be in "naive" susceptible class
-        else  #2017 onwards
+        else
 
             #Apply mortality probability to each age class
             #DeathAdjAbsolutePopn = AbsolutePopn.*(1-MortalityProbByAge)'
             DeathAdjAbsolutePopn = zeros(M)
-            DeathAdjOverallAbsolutePopn = zeros(M)
             for ii = 1:M
                  DeathAdjAbsolutePopn[ii] = AbsolutePopn[ii]*(1-MortalityProbByAge[ii])
-                 DeathAdjOverallAbsolutePopn[ii] = OverallAbsolutePopn[ii].*(1-MortalityProbByAge[ii])
             end
-
-            #Perform age class movements (entire population age distribution)
-            OverallAbsolutePopn[2:end-1] = DeathAdjOverallAbsolutePopn[1:end-2]
-            OverallAbsolutePopn[end] = DeathAdjOverallAbsolutePopn[end-1] + DeathAdjOverallAbsolutePopn[end]
-
-            #Repopulate youngest age class
-            OverallAbsolutePopn[1] = 653467
 
             #Perform age class movements
             AbsolutePopn[2:end-1] = DeathAdjAbsolutePopn[1:end-2]
             AbsolutePopn[end] = DeathAdjAbsolutePopn[end-1] + DeathAdjAbsolutePopn[end]
 
-            #Repopulate youngest age class(based on risk group being
-            #simulated_
-            if SimnRunType == 2 #At-risk
-                AbsolutePopn[1] = 13292
-            elseif SimnRunType == 3 #Low risk
-                AbsolutePopn[1] = 640175
-            end
+            #Repopulate youngest age class
+            AbsolutePopn[1] = 653467
 
             #Calculate updated age-stratified population distribution
-            n_PopnLevel = OverallAbsolutePopn/sum(OverallAbsolutePopn)
             updated_n = AbsolutePopn/sum(AbsolutePopn)
 
             #Find relative magnitude of next season population split per age compared to
@@ -894,8 +870,8 @@ while T0<MaxTime
         #R_0 = InfectionParam[4]::Array{Float64,1}
 
         #Transform ContactArray. Divide by population structure
-        #Divide row ii of ContactArray by n_PopnLevel(ii)
-        ContactArrayTemp = ContactArray./n_PopnLevel #n_PopnLevel column vector, orientation okay!
+        #Divide row ii of ContactArray by updated_n(ii)
+        ContactArrayTemp = ContactArray./updated_n #updated_n column vector, orientation okay!
 
         #Set values for 90+ age categories
         #Match 89-90 single year age bracket values
@@ -909,12 +885,16 @@ while T0<MaxTime
         beta = gamma.*R_0/spec_rad
         InfectionParam[1] = beta::Array{Float64,1}
 
-        # For 2020/2021 influenza season, no transmission
-        if 4000 < T[end] < 4380
-            println("MonthIdx: $(MonthIdx)")
-            println("T: $(T[end])")
-            ContactArrayTransformed = ContactArrayTransformed.*influenza_season_2021_2022_contact_scaling
-        end
+        # For COVID-19 setting, scale the contact array
+        # Hard coded addition, commented out for scenarios where NPIs not in use.
+        # Legacy of the pace of work, where a hard coding hack
+        # was swiftest way vs creating more elegant code with flag variable to access
+        # this loop when required.
+        # if T[end] > 4000
+        #     println("MonthIdx: $(MonthIdx)")
+        #     println("T: $(T[end])")
+        #     ContactArrayTransformed = ContactArrayTransformed.*COVID_contact_scaling
+        # end
 
         #-----------------------------------------------------------------------
         ### UPDATE TRANSMISSION RELATED PARAMETERS
@@ -923,6 +903,9 @@ while T0<MaxTime
 
         #-----------------------------------------------------------------------
         ### Initialise infectious popn, update susceptible compartments
+        # for i = 1:NumOfStrains
+        #      I0_NotV[:,i] = updated_n*InfPropn_StartOfSeason[i]
+        # end
 
         #Row 1 for when only H1N1 infection allowed
         #Row 2 when infection by any strain allowed
@@ -1026,12 +1009,17 @@ while T0<MaxTime
 	end
 end
 
-    if StoreFlag_PopnFOI == 0
-        return Store_T,Store_S_NotV,Store_S_V,Store_E_NotV,Store_E_V,Store_I_NotV,Store_I_V,
-            Store_R_NotV,Store_R_V,Store_C,Store_PopnDist
-    else
-        return Store_T,Store_S_NotV,Store_S_V,Store_E_NotV,Store_E_V,Store_I_NotV,Store_I_V,
-            Store_R_NotV,Store_R_V,Store_C,Store_PopnDist,Store_PopnFOI
-    end
+if StoreFlag_PopnFOI == 0
+    return Store_T,Store_S_NotV,Store_S_V,Store_E_NotV,Store_E_V,Store_I_NotV,Store_I_V,
+        Store_R_NotV,Store_R_V,Store_C,Store_PopnDist
+else
+    return Store_T,Store_S_NotV,Store_S_V,Store_E_NotV,Store_E_V,Store_I_NotV,Store_I_V,
+        Store_R_NotV,Store_R_V,Store_C,Store_PopnDist,Store_PopnFOI
+end
 
 end
+#
+# end #@iprofile begin
+#
+# @iprofile report
+# @iprofile clear

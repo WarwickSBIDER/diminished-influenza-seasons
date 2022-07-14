@@ -2,9 +2,10 @@
 #Script to run Full Model (Alt), WITH LEAKY VACCINE
 #Multiple simulations with parameters read from file.
 
-#Covid-19 variant:
-# Intended to be used to simulate through to 2020/2021 influenza seasons under differing
-# vaccine schedules and/or with NPIs included.
+#2021/2022 influenza season, with no influenza cases in 2020/2021:
+# Intended to be used to simulate through to 2021/2022 influenza seasons
+# Set to have no cases in 2020/2021 influenza season
+# under differing vaccine schedules and/or with NPIs included.
 
 #VERSION TO ACCOUNT FOR RISK GROUP SPECIFIC INFORMATION
 #No ascertainment probability involved
@@ -917,7 +918,7 @@ end
 
 #--------------------------------------------------------------------------
 ### ADD FILES TO SEARCH PATH FOR ODES/MODEL RUN FUNCTION
-include("model_supporting_functions/RunSeasonalFluModelFMAlt_RecRiskFns_Julia.jl")
+include("model_supporting_functions/RunSeasonalFluModelFMAlt_RecRiskFns_2021_2022_scenarios.jl")
 include("model_supporting_functions/ExpHistUpdateJulV1.jl")
 
 #--------------------------------------------------------------------------

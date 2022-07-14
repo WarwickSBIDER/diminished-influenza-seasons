@@ -917,7 +917,7 @@ end
 
 #--------------------------------------------------------------------------
 ### ADD FILES TO SEARCH PATH FOR ODES/MODEL RUN FUNCTION
-include("model_supporting_functions/RunSeasonalFluModelFMAlt_RecRiskFns_Julia.jl")
+include("model_supporting_functions/RunSeasonalFluModelFMAlt_RecRiskFns_2020_2021_scenarios.jl")
 include("model_supporting_functions/ExpHistUpdateJulV1.jl")
 
 #--------------------------------------------------------------------------

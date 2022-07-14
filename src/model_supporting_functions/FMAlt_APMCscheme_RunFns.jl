@@ -4,7 +4,6 @@
 
 # Compatible with Julia v1.0
 
-#Code Author: Ed Hill
 #Date: January 2019
 #Modified: June 2019 (Ascertainment & suceptibility construct functions added)
 #-------------------------------------------------------------------------------

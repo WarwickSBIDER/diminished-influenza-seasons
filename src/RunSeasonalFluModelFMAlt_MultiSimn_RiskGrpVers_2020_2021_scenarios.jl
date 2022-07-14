@@ -31,7 +31,6 @@ Load packages
 # Load libraries
 using Combinatorics
 using DifferentialEquations
-using DataFrames
 using XLSX
 using DelimitedFiles
 using LinearAlgebra
@@ -926,7 +925,7 @@ include("model_supporting_functions/ExpHistUpdateJulV1.jl")
 #--------------------------------------------------------------------------
 OverallPopnDataFileID = "Covid19_NPIs_and_vacc"
 	# Options: "Covid19_NPIs_only"
-	#			"Covid19_NPIs_and_vacc" 
+	#			"Covid19_NPIs_and_vacc"
 	# 			"Covid19_vacc_only"
 	# 			"Covid19_baseline"
 

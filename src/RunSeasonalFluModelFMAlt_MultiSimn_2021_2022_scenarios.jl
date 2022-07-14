@@ -33,7 +33,6 @@ Load packages
 # Load libraries
 using Combinatorics
 using DifferentialEquations
-using DataFrames
 using XLSX
 using DelimitedFiles
 using LinearAlgebra
@@ -419,7 +418,7 @@ close(OutputFile)
 end
 #--------------------------------------------------------------------------
 ### ADD FILES TO SEARCH PATH FOR ODES/MODEL RUN FUNCTION
-include("model_supporting_functions/ODE_RunModelFMAlt_Files/RunSeasonalFluModelFMAlt_Julia.jl")
+include("model_supporting_functions/RunSeasonalFluModelFMAlt_Julia.jl")
 include("model_supporting_functions/ExpHistUpdateJulV1.jl")
 include("model_supporting_functions/FMAlt_APMCscheme_RunFns.jl")
 

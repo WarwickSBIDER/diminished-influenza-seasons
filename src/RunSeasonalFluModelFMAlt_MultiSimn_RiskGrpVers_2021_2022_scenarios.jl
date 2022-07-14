@@ -31,7 +31,6 @@ Load packages
 # Load libraries
 using Combinatorics
 using DifferentialEquations
-using DataFrames
 using XLSX
 using DelimitedFiles
 using LinearAlgebra

@@ -1,6 +1,9 @@
 # diminished-influenza-seasons
 This repository houses code developed for the analysis presented in the scientific publication "Scenario modelling for diminished influenza seasons during 2020/2021 and 2021/2022 in England" by Edward M. Hill and Matt J. Keeling.
 
+Preprint details: Edward M Hill, Matt J Keeling. (2022) Scenario modelling for diminished influenza seasons during 2020/2021 and 2021/2022 in England. *medRxiv*. doi: 10.1101/2022.10.27.22281628. URL: https://doi.org/10.1101/2022.10.27.22281628.
+
+
 Model simulations are performed using the programming language Julia.
 Julia makes use of environments, allowing bespoke package lists for separate projects. Documentation on working with environments and installing packages in the same state that is given by the project manifest: https://pkgdocs.julialang.org/v1/environments/#Using-someone-else's-project
 
